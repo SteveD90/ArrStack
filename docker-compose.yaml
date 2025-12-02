@@ -1,55 +1,71 @@
+version: "3.8"
+
 services:
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: ${RADARR_IMAGE:-lscr.io/linuxserver/radarr:latest}
     container_name: radarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /srv/radarr/config:/config
-      - /mnt/tank/media:/media
-      - /srv/downloads/movies-radarr:/downloads
+      - ${RADARR_CONFIG}:/config
+      - ${MEDIA_PATH}:/media
+      - ${RADARR_DOWNLOADS}:/downloads
     ports:
-      - 7878:7878
+      - "${RADARR_PORT}:7878"
     restart: unless-stopped
+    networks:
+      - media-net
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: ${PROWLARR_IMAGE:-lscr.io/linuxserver/prowlarr:latest}
     container_name: prowlarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /srv/prowlarr/config:/config
-      - /mnt/tank/media/:/media/
+      - ${PROWLARR_CONFIG}:/config
+      - ${MEDIA_PATH}:/media
     ports:
-      - 9696:9696
+      - "${PROWLARR_PORT}:9696"
     restart: unless-stopped
+    networks:
+      - media-net
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: ${SONARR_IMAGE:-lscr.io/linuxserver/sonarr:latest}
     container_name: sonarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /srv/sonarr/config:/config
-      - /mnt/tank/media:/media
-      - /srv/downloads/tv-sonarr:/downloads
+      - ${SONARR_CONFIG}:/config
+      - ${MEDIA_PATH}:/media
+      - ${SONARR_DOWNLOADS}:/downloads
     ports:
-      - 8989:8989
+      - "${SONARR_PORT}:8989"
     restart: unless-stopped
+    networks:
+      - media-net
 
   profilarr:
-    image: santiagosayshey/profilarr:latest
+    image: ${PROFILARR_IMAGE:-santiagosayshey/profilarr:latest}
     container_name: profilarr
-    ports:
-      - 6868:6868
-    volumes:
-      - /srv/profilarr/config:/config
     environment:
-      - TZ=America/New_York
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${PROFILARR_CONFIG}:/config
+    ports:
+      - "${PROFILARR_PORT}:6868"
     restart: unless-stopped
+    networks:
+      - media-net
+
+networks:
+  media-net:
+    driver: bridge
