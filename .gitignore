@@ -1,0 +1,5 @@
+.env
+*.tar.gz
+/backups/
+/node_modules/
+/.vscode/
