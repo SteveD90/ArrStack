@@ -66,6 +66,23 @@ services:
     networks:
       - media-net
 
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${SABNZBD_CONFIG}:/config
+      - ${SABNZBD_DOWNLOADS}:/downloads
+    ports:
+      - "${SABNZBD_PORT}:8080"
+      - "9090:9090"
+    restart: unless-stopped
+    networks:
+      - media-net
+
 networks:
   media-net:
     driver: bridge
