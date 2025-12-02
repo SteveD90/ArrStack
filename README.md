@@ -1,8 +1,7 @@
-```markdown
-# Media Stack (Radarr / Sonarr / Prowlarr / Profilarr)
+# Media Stack (Radarr / Sonarr / Prowlarr / Profilarr / SABnzbd)
 
 What this folder contains
-- docker-compose.yml        - service definitions (Radarr, Sonarr, Prowlarr, Profilarr)
+- docker-compose.yml        - service definitions (Radarr, Sonarr, Prowlarr, Profilarr, SABnzbd)
 - .env                     - runtime variables (PUID, PGID, paths, ports) — create from .env.example
 - create_dirs.sh           - create host config/downloads dirs and chown to PUID/PGID
 - backup_configs.sh        - quick tar backup of service config directories
@@ -31,6 +30,19 @@ Backups
   ./backup_configs.sh
 - Extend the script to push backups to NAS or cloud (rsync/restic/etc).
 
+## SABnzbd Integration
+- SABnzbd is included in this stack for managing Usenet downloads.
+- Ensure the following variables are set in `.env`:
+  - `SABNZBD_CONFIG=/srv/sabnzbd/config`
+  - `SABNZBD_DOWNLOADS=/srv/downloads`
+  - `SABNZBD_PORT=8080`
+- Access SABnzbd at `http://<server-ip>:8080` after starting the stack.
+
+## Proxmox-Specific Setup
+- Ensure Docker is installed on your Proxmox VM.
+- Mount NAS shares using CIFS/SMB with appropriate `uid` and `gid` options.
+- Verify that `/srv` directories are accessible and writable by Docker containers.
+
 Security notes
 - Do NOT commit .env or other files containing secrets to git. Add .env to .gitignore.
 - For production secrets consider a secrets manager or Docker secrets.
@@ -43,4 +55,3 @@ Optional improvements
 - Add a reverse proxy (Traefik or nginx-proxy) with SSL for remote access.
 - Add Watchtower or a GitHub Actions pipeline to build/publish versioned images for production.
 - Add healthchecks in docker-compose for better orchestration/resilience.
-```
