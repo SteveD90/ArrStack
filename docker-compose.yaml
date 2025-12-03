@@ -83,6 +83,26 @@ services:
     networks:
       - media-net
 
+  sab-stream-proxy:
+    image: yourrepo/sab-stream-proxy:latest   # or build: ./sab-stream-proxy if you include the folder
+    container_name: sab-stream-proxy
+    environment:
+      - SAB_HOST=http://sabnzbd:8080          # service name must match your SAB service name
+      - SAB_APIKEY=${SAB_APIKEY}
+      - DOWNLOADS_DIR=/downloads              # must match the path inside container where SAB writes
+      - BASE_URL=${BASE_URL}                  # e.g., https://usenet.sdonn14.org or http://<host-ip>
+      - PORT=3000
+    volumes:
+      - ${SAB_STREAM_PROXY_CONFIG}:/usr/src/app       # optional if building locally
+      - ${SABNZBD_DOWNLOADS}:/downloads:rw        # KEEP this the same host path/volume that SAB uses
+    ports:
+      - "${SAB_STREAM_PROXY_PORT}:3000"
+    depends_on:
+      - sabnzbd
+    restart: unless-stopped
+    networks:
+      - media-net
+
 networks:
   media-net:
     driver: bridge
