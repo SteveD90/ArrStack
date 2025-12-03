@@ -1,6 +1,22 @@
 version: "3.8"
 
 services:
+  bazarr:
+    image: ${BAZARR_IMAGE:-lscr.io/linuxserver/bazarr:latest}
+    container_name: bazarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${BAZARR_CONFIG}:/config
+      - ${MEDIA_PATH}:/media
+      - ${BAZARR_DOWNLOADS}:/downloads
+    ports:
+      - "${BAZARR_PORT}:6767"
+    restart: unless-stopped
+    networks:
+      - media-net
   radarr:
     image: ${RADARR_IMAGE:-lscr.io/linuxserver/radarr:latest}
     container_name: radarr
