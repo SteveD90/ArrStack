@@ -165,6 +165,7 @@ services:
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME:-gpt-4.1-mini}
+      - TMDB_API_KEY=${TMDB_API_KEY}
       - SONARR_URL=${SONARR_URL:-http://sonarr:8989}
       - SONARR_API_KEY=${SONARR_API_KEY}
       - RADARR_URL=${RADARR_URL:-http://radarr:7878}
