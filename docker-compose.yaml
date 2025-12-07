@@ -118,6 +118,41 @@ services:
     networks:
       - arr-network
 
+  portainer:
+    image: ${PORTAINER_IMAGE:-portainer/portainer-ce:latest}
+    container_name: portainer
+    hostname: portainer.internal
+    command: -H unix:///var/run/docker.sock
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PORTAINER_DATA:-/mnt/ssd/appdata/portainer}:/data
+    ports:
+      - "${PORTAINER_PORT:-9000}:9000"
+      - "${PORTAINER_HTTPS_PORT:-9443}:9443"
+    networks:
+      - arr-network
+
+  dockge:
+    image: ${DOCKGE_IMAGE:-louislam/dockge:latest}
+    container_name: dockge
+    hostname: dockge.internal
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    environment:
+      - DOCKGE_STACKS_DIR=${DOCKGE_STACKS_DIR:-/mnt/ssd/docker/stacks}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKGE_DATA:-/mnt/ssd/appdata/dockge}:/app/data
+      - ${DOCKGE_STACKS_DIR:-/mnt/ssd/docker/stacks}:/opt/stacks
+    ports:
+      - "${DOCKGE_PORT:-5001}:5001"
+    networks:
+      - arr-network
+
 networks:
   arr-network:
     driver: bridge
