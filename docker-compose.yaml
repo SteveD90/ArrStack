@@ -153,6 +153,37 @@ services:
     networks:
       - arr-network
 
+  media-ai-assistant:
+    image: ${MEDIA_AI_IMAGE:-sdonnelly1990/media-ai-assistant:latest}
+    container_name: media-ai-assistant
+    hostname: media-ai-assistant.internal
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    extra_hosts:
+      - "nas:${NAS_IP:-10.0.0.8}"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME:-gpt-4.1-mini}
+      - SONARR_URL=${SONARR_URL:-http://sonarr:8989}
+      - SONARR_API_KEY=${SONARR_API_KEY}
+      - RADARR_URL=${RADARR_URL:-http://radarr:7878}
+      - RADARR_API_KEY=${RADARR_API_KEY}
+      - SONARR_ROOT_FOLDER=${SONARR_ROOT_FOLDER:-/media/tv}
+      - SONARR_QUALITY_PROFILE_ID=${SONARR_QUALITY_PROFILE_ID:-7}
+      - SONARR_LANGUAGE_PROFILE_ID=${SONARR_LANGUAGE_PROFILE_ID:-7}
+      - RADARR_ROOT_FOLDER=${RADARR_ROOT_FOLDER:-/media/movies}
+      - RADARR_QUALITY_PROFILE_ID=${RADARR_QUALITY_PROFILE_ID:-7}
+      - LIBRARY_SAMPLE_SIZE=${LIBRARY_SAMPLE_SIZE:-50}
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
+    ports:
+      - "${MEDIA_AI_PORT:-5050}:5050"
+    networks:
+      - arr-network
+    depends_on:
+      - sonarr
+      - radarr
+
 networks:
   arr-network:
     driver: bridge
