@@ -1,0 +1,123 @@
+version: "3.2"
+
+services:
+  bazarr:
+    image: ${BAZARR_IMAGE:-ghcr.io/hotio/bazarr:latest}
+    container_name: bazarr
+    hostname: bazarr.internal
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${BAZARR_CONFIG}:/config
+      - ${MEDIA_PATH}:/media
+    ports:
+      - "${BAZARR_PORT}:6767"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    networks:
+      - arr-network
+      
+  radarr:
+    image: ${RADARR_IMAGE:-ghcr.io/hotio/radarr:latest}
+    container_name: radarr
+    hostname: radarr.internal
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${RADARR_CONFIG}:/config
+      - ${DATA_PATH}:/data
+      - ${USENET_PATH}:/usenet
+      - ${MEDIA_PATH}:/media
+    ports:
+      - "${RADARR_PORT}:7878"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    networks:
+      - arr-network
+
+  prowlarr:
+    image: ${PROWLARR_IMAGE:-ghcr.io/hotio/prowlarr:latest}
+    container_name: prowlarr
+    hostname: prowlarr.internal
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${PROWLARR_CONFIG}:/config
+    ports:
+      - "${PROWLARR_PORT}:9696"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    networks:
+      - arr-network
+
+  sonarr:
+    image: ${SONARR_IMAGE:-ghcr.io/hotio/sonarr:latest}
+    container_name: sonarr
+    hostname: sonarr.internal
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${SONARR_CONFIG}:/config
+      - ${DATA_PATH}:/data
+      - ${USENET_PATH}:/usenet
+      - ${MEDIA_PATH}:/media
+    ports:
+      - "${SONARR_PORT}:8989"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    networks:
+      - arr-network
+
+  profilarr:
+    image: ${PROFILARR_IMAGE:-santiagosayshey/profilarr:latest}
+    container_name: profilarr
+    hostname: profilarr.internal
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${PROFILARR_CONFIG}:/config
+    ports:
+      - "${PROFILARR_PORT}:6868"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    networks:
+      - arr-network
+
+  sabnzbd:
+    image: ${SABNZBD_IMAGE:-ghcr.io/hotio/sabnzbd:latest}
+    container_name: sabnzbd
+    hostname: sabnzbd.internal
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${SABNZBD_CONFIG}:/config
+      - ${USENET_PATH}:/usenet
+    ports:
+      - "${SABNZBD_PORT}:8080"
+      - "${SABNZBD_PORT_HTTPS:-9090}:9090"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+    networks:
+      - arr-network
+
+networks:
+  arr-network:
+    driver: bridge

@@ -1,0 +1,9 @@
+# Enforce LF line endings for text files so scripts work on Linux
+*.sh text eol=lf
+*.env text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+
+# Do not export .env in archives
+.env export-ignore
